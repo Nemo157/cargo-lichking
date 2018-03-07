@@ -41,6 +41,8 @@ A. Wheeler run `cargo lichking check`.
 [License Slide]: http://www.dwheeler.com/essays/floss-license-slide.html
 
 ## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FNemo157%2Fcargo-lichking.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FNemo157%2Fcargo-lichking?ref=badge_shield)
+
 
 Licensed under either of
 
@@ -48,6 +50,9 @@ Licensed under either of
  * MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
 
 at your option.
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FNemo157%2Fcargo-lichking.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FNemo157%2Fcargo-lichking?ref=badge_large)
 
 ### Contribution
 
