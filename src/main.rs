@@ -13,6 +13,7 @@ mod licensed;
 mod list;
 mod load;
 mod options;
+mod scrape_config;
 mod thirdparty;
 
 use std::process;
@@ -46,11 +47,11 @@ fn real_main(options: Options, config: &mut Config) -> CliResult {
     let manifest_path = options.manifest_path;
 
     match options.cmd {
-        Cmd::Check { package } => {
+        Cmd::Check { package, target } => {
             let mut error = Ok(());
             let roots = load::resolve_roots(manifest_path.clone(), config, package)?;
             for root in roots {
-                let packages = load::resolve_packages(manifest_path.clone(), config, vec![&root])?;
+                let packages = load::resolve_packages(manifest_path.clone(), config, vec![&root], target.clone())?;
                 if let Err(err) = check::run(&root, packages, config) {
                     error = Err(err);
                 }
@@ -58,15 +59,15 @@ fn real_main(options: Options, config: &mut Config) -> CliResult {
             error?;
         }
 
-        Cmd::List { by, package } => {
+        Cmd::List { by, package, target } => {
             let roots = load::resolve_roots(manifest_path.clone(), config, package)?;
-            let packages = load::resolve_packages(manifest_path, config, &roots)?;
+            let packages = load::resolve_packages(manifest_path, config, &roots, target)?;
             list::run(packages, by)?;
         }
 
-        Cmd::Bundle { variant, package } => {
+        Cmd::Bundle { variant, package, target } => {
             let roots = load::resolve_roots(manifest_path.clone(), config, package)?;
-            let packages = load::resolve_packages(manifest_path, config, &roots)?;
+            let packages = load::resolve_packages(manifest_path, config, &roots, target)?;
             bundle::run(&roots, packages, config, variant)?;
         }
 

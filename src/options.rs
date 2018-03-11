@@ -3,6 +3,7 @@
 use std::str::FromStr;
 
 use cargo::core::PackageIdSpec;
+use cargo::core::dependency::Platform;
 use clap::{ App, Arg, SubCommand, AppSettings, ArgMatches };
 
 #[derive(Copy, Clone, Debug)]
@@ -16,6 +17,13 @@ pub enum SelectedPackage {
     All,
     Default,
     Specific(PackageIdSpec),
+}
+
+#[derive(Clone, Debug)]
+pub enum SelectedTarget {
+    All,
+    Default,
+    Specific(Platform),
 }
 
 #[derive(Clone, Debug)]
@@ -40,13 +48,16 @@ pub enum Cmd {
     List {
         by: By,
         package: SelectedPackage,
+        target: SelectedTarget,
     },
     Check {
         package: SelectedPackage,
+        target: SelectedTarget,
     },
     Bundle {
         variant: Bundle,
         package: SelectedPackage,
+        target: SelectedTarget,
     },
     ThirdParty {
         full: bool,
@@ -120,6 +131,32 @@ impl SelectedPackage {
                 .map(|s| PackageIdSpec::parse(s).expect("validated"))
                 .map(SelectedPackage::Specific)
                 .unwrap_or(SelectedPackage::Default)
+        }
+    }
+}
+
+impl SelectedTarget {
+    fn args() -> Vec<Arg<'static, 'static>> {
+        vec![
+            Arg::with_name("all-targets")
+                .long("all-targets")
+                .help("Include all optional dependencies for all targets"),
+            Arg::with_name("target")
+                .long("target")
+                .takes_value(true).value_name("TRIPLE")
+                .help("Include optional dependencies for the specified triple"),
+        ]
+    }
+
+    fn from_matches(matches: &ArgMatches) -> SelectedTarget {
+        if matches.is_present("all-targets") {
+            SelectedTarget::All
+        } else {
+            matches.value_of("target")
+                .map(str::to_owned)
+                .map(Platform::Name)
+                .map(SelectedTarget::Specific)
+                .unwrap_or(SelectedTarget::Default)
         }
     }
 }
@@ -255,19 +292,23 @@ impl Options {
             SubCommand::with_name("check")
                 .about("Check that all dependencies have a compatible license with a package")
                 .args(&SelectedPackage::args())
-                .after_help(SelectedPackage::help()),
+                .args(&SelectedTarget::args())
+                .after_help(SelectedPackage::help())
+
 
             SubCommand::with_name("list")
                 .about("List licensing of all dependencies")
                 .args(&By::args())
                 .args(&SelectedPackage::args())
-                .after_help(SelectedPackage::help()),
+                .args(&SelectedTarget::args())
+                .after_help(SelectedPackage::help())
 
             SubCommand::with_name("bundle")
                 .about("Bundle all dependencies licenses ready for distribution")
                 .args(&Bundle::args())
                 .args(&SelectedPackage::args())
-                .after_help(SelectedPackage::help()),
+                .args(&SelectedTarget::args())
+                .after_help(SelectedPackage::help())
 
             SubCommand::with_name("thirdparty")
                 .about("List dependencies of cargo-lichking")
@@ -292,18 +333,21 @@ impl Options {
                 ("check", Some(matches)) => {
                     Cmd::Check {
                         package: SelectedPackage::from_matches(matches),
+                        target: SelectedTarget::from_matches(matches),
                     }
                 }
                 ("list", Some(matches)) => {
                     Cmd::List {
                         by: By::from_matches(matches),
                         package: SelectedPackage::from_matches(matches),
+                        target: SelectedTarget::from_matches(matches),
                     }
                 }
                 ("bundle", Some(matches)) => {
                     Cmd::Bundle {
                         variant: Bundle::from_matches(matches),
                         package: SelectedPackage::from_matches(matches),
+                        target: SelectedTarget::from_matches(matches),
                     }
                 }
                 ("thirdparty", Some(matches)) => {
