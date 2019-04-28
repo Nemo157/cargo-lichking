@@ -97,8 +97,9 @@ impl License {
         if let LGPL_2_0 = *other { return None; /* TODO: unknown */ }
 
         // GPL compatibility from https://www.gnu.org/licenses/gpl-faq.html#AllCompatibility
-        // The fields where combination would be upgraded to GPLv3
-        // are not considered.
+        // If the combined license would be different than both constituents,
+        // the licenses still are marked compatible.
+        // However, that change of license is not taken into account for the whole project.
         // The license on the left is "I want to license my code under".
         compatibility!(*self, *other, {
             Unspecified         => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause]
@@ -113,11 +114,11 @@ impl License {
             Apache_2_0   => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause, Apache_2_0]
             MPL_1_1      => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_1_1]
             MPL_2_0      => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause, Apache_2_0, MPL_2_0]
-            LGPL_2_1Plus => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, LGPL_2_1Plus, LGPL_2_1, LGPL_3_0]
-            LGPL_2_1     => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, LGPL_2_1Plus, LGPL_2_1, LGPL_3_0]
-            LGPL_3_0Plus => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, Apache_2_0, LGPL_2_1Plus, LGPL_3_0Plus]
-            LGPL_3_0     => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, Apache_2_0, LGPL_2_1Plus, LGPL_2_1, LGPL_3_0Plus, LGPL_3_0]
-            GPL_2_0Plus  => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, LGPL_2_1Plus, LGPL_2_1, GPL_2_0Plus]
+            LGPL_2_1Plus => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, LGPL_2_1Plus, LGPL_2_1, LGPL_3_0, GPL_2_0, GPL_2_0Plus, GPL_3_0, AGPL_3_0]
+            LGPL_2_1     => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, LGPL_2_1Plus, LGPL_2_1, LGPL_3_0, GPL_2_0, GPL_2_0Plus, GPL_3_0, AGPL_3_0]
+            LGPL_3_0Plus => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, Apache_2_0, LGPL_2_1Plus, LGPL_3_0Plus, GPL_2_0Plus, GPL_3_0, AGPL_3_0]
+            LGPL_3_0     => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, Apache_2_0, LGPL_2_1Plus, LGPL_2_1, LGPL_3_0Plus, LGPL_3_0, GPL_2_0Plus, GPL_3_0, AGPL_3_0]
+            GPL_2_0Plus  => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, LGPL_2_1Plus, LGPL_2_1, LGPL_3_0, GPL_2_0Plus, GPL_3_0, AGPL_3_0]
             GPL_2_0      => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, LGPL_2_1Plus, LGPL_2_1, GPL_2_0Plus, GPL_2_0]
             GPL_3_0Plus  => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, Apache_2_0, LGPL_2_1Plus, LGPL_2_1, LGPL_3_0Plus, LGPL_3_0, GPL_2_0Plus, GPL_3_0Plus, GPL_3_0, AGPL_3_0]
             GPL_3_0      => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, Apache_2_0, LGPL_2_1Plus, LGPL_2_1, GPL_2_0Plus, GPL_3_0Plus, GPL_3_0]
