@@ -146,11 +146,16 @@ impl License {
 
     pub fn template(&self) -> Option<&'static str> {
         Some(match *self {
-            License::Unlicense => include_str!("licenses/Unlicense"),
-            License::MIT => include_str!("licenses/MIT"),
+            License::AGPL_3_0 => include_str!("licenses/AGPLv3"),
             License::Apache_2_0 => include_str!("licenses/Apache-2.0"),
             License::BSD_3_Clause => include_str!("licenses/BSD-3-Clause"),
-            License::Multiple(_) => panic!("TODO: Refactor multiple handling"),
+            License::CC0_1_0 => include_str!("licenses/CC0"),
+            License::GPL_3_0 => include_str!("licenses/GPLv3"),
+            License::LGPL_3_0 => include_str!("licenses/LGPLv3"),
+            License::MIT => include_str!("licenses/MIT"),
+            License::MPL_2_0 => include_str!("licenses/MPL-2.0"),
+            License::Unlicense => include_str!("licenses/Unlicense"),
+            License::Multiple(_) => todo!("TODO: Refactor multiple handling"),
             _ => return None,
         })
     }
