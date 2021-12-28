@@ -1,9 +1,10 @@
+use cargo_metadata::camino::Utf8PathBuf;
 use std::fmt;
-use std::path::PathBuf;
 use std::str::FromStr;
 
 #[derive(Eq, PartialEq, Hash, Ord, PartialOrd, Debug)]
 #[allow(non_camel_case_types)]
+#[allow(clippy::upper_case_acronyms)]
 pub enum License {
     // Licenses specified in the [SPDX License List](https://spdx.org/licenses/)
     Unlicense,
@@ -30,7 +31,7 @@ pub enum License {
 
     // Special cases
     Custom(String),
-    File(PathBuf),
+    File(Utf8PathBuf),
     Multiple(Vec<License>),
     Unspecified,
 }
@@ -222,7 +223,7 @@ impl fmt::Display for License {
             License::AGPL_3_0Plus => write!(w, "AGPL-3.0-or-later"),
             License::Custom(ref s) => write!(w, "{}", s),
             License::File(ref f) => {
-                write!(w, "License specified in file ({})", f.to_string_lossy())
+                write!(w, "License specified in file ({})", f.to_string())
             }
             License::Multiple(ref ls) => {
                 write!(w, "{}", ls[0])?;

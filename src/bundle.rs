@@ -534,7 +534,7 @@ fn choose(
                 "{} has no candidate texts for license {} in {}",
                 package.name,
                 license,
-                package.manifest_path.parent().unwrap().display()
+                package.manifest_path.parent().unwrap()
             );
             context.missing_license = true;
             return Ok(None);
