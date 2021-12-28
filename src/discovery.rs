@@ -17,6 +17,7 @@ pub enum Confidence {
     Unsure,
 }
 
+#[derive(Debug, Eq, PartialEq)]
 pub struct LicenseText {
     pub path: PathBuf,
     pub text: String,
@@ -121,6 +122,7 @@ pub fn find_license_text(package: &Package, license: &License) -> anyhow::Result
         let name = name.to_uppercase();
         match *license {
             License::Apache_2_0 => name == "LICENSE-APACHE",
+            License::BSL_1_0 => name == "LICENSE-BOOST" || name == "LICENSE-BSL",
             License::Custom(ref custom) => {
                 let custom = custom.to_uppercase();
                 name == custom || name == format!("LICENSE-{}", custom)
