@@ -19,10 +19,10 @@ struct Manifest {
     workspace: Workspace,
 }
 
-pub fn resolve_roots<'a>(
-    metadata: &'a Metadata,
+pub fn resolve_roots(
+    metadata: &Metadata,
     package: SelectedPackage,
-) -> anyhow::Result<Vec<&'a Package>> {
+) -> anyhow::Result<Vec<&Package>> {
     match package {
         SelectedPackage::All => metadata
             .workspace_members
@@ -90,9 +90,9 @@ pub fn resolve_packages<'a>(
 
     while let Some(id) = to_check.pop() {
         if added.insert(id) {
-            let package = packages.by_id(&id)?;
+            let package = packages.by_id(id)?;
             result.push(package);
-            for dep in resolve.by_id(&id)? {
+            for dep in resolve.by_id(id)? {
                 if dep
                     .dep_kinds
                     .iter()

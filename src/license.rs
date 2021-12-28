@@ -1,13 +1,16 @@
+use cargo_metadata::camino::Utf8PathBuf;
 use std::fmt;
-use std::path::PathBuf;
 use std::str::FromStr;
 
 #[derive(Eq, PartialEq, Hash, Ord, PartialOrd, Debug)]
 #[allow(non_camel_case_types)]
+#[allow(clippy::upper_case_acronyms)]
 pub enum License {
     // Licenses specified in the [SPDX License List](https://spdx.org/licenses/)
     Unlicense,
     BSD_0_Clause,
+    // https://spdx.org/licenses/BSL-1.0.html
+    BSL_1_0,
     CC0_1_0,
     MIT,
     X11,
@@ -30,7 +33,7 @@ pub enum License {
 
     // Special cases
     Custom(String),
-    File(PathBuf),
+    File(Utf8PathBuf),
     Multiple(Vec<License>),
     Unspecified,
 }
@@ -109,7 +112,7 @@ impl License {
         }
 
         compatibility!(*self, *other, {
-            Unspecified         => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause]
+            Unspecified  => [Unlicense, MIT, X11, BSD_2_Clause, BSD_3_Clause]
 
             LGPL_2_0     => [LGPL_2_0] // TODO: probably allows more
 
@@ -131,6 +134,7 @@ impl License {
             GPL_2_0      => [Unlicense, BSD_0_Clause, CC0_1_0, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, LGPL_2_1Plus, LGPL_2_1, GPL_2_0Plus, GPL_2_0]
             GPL_3_0Plus  => [Unlicense, BSD_0_Clause, CC0_1_0, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, Apache_2_0, LGPL_2_1Plus, LGPL_2_1, GPL_2_0Plus, GPL_3_0Plus]
             GPL_3_0      => [Unlicense, BSD_0_Clause, CC0_1_0, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, Apache_2_0, LGPL_2_1Plus, LGPL_2_1, GPL_2_0Plus, GPL_3_0Plus, GPL_3_0]
+            BSL_1_0      => [Unlicense, BSD_0_Clause, CC0_1_0, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, Apache_2_0, LGPL_2_1Plus, LGPL_2_1, GPL_2_0Plus, GPL_3_0Plus, GPL_3_0, BSL_1_0]
             AGPL_3_0Plus => [Unlicense, BSD_0_Clause, CC0_1_0, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, Apache_2_0, LGPL_2_1Plus, LGPL_2_1, GPL_2_0Plus, GPL_3_0Plus, GPL_3_0, AGPL_3_0Plus]
             AGPL_3_0     => [Unlicense, BSD_0_Clause, CC0_1_0, MIT, X11, BSD_2_Clause, BSD_3_Clause, MPL_2_0, Apache_2_0, LGPL_2_1Plus, LGPL_2_1, GPL_2_0Plus, GPL_3_0Plus, GPL_3_0, AGPL_3_0Plus, AGPL_3_0]
 
@@ -145,11 +149,17 @@ impl License {
 
     pub fn template(&self) -> Option<&'static str> {
         Some(match *self {
-            License::Unlicense => include_str!("licenses/Unlicense"),
-            License::MIT => include_str!("licenses/MIT"),
+            License::AGPL_3_0 => include_str!("licenses/AGPLv3"),
             License::Apache_2_0 => include_str!("licenses/Apache-2.0"),
             License::BSD_3_Clause => include_str!("licenses/BSD-3-Clause"),
-            License::Multiple(_) => panic!("TODO: Refactor multiple handling"),
+            License::BSL_1_0 => include_str!("licenses/BSL-1.0"),
+            License::CC0_1_0 => include_str!("licenses/CC0"),
+            License::GPL_3_0 => include_str!("licenses/GPLv3"),
+            License::LGPL_3_0 => include_str!("licenses/LGPLv3"),
+            License::MIT => include_str!("licenses/MIT"),
+            License::MPL_2_0 => include_str!("licenses/MPL-2.0"),
+            License::Unlicense => include_str!("licenses/Unlicense"),
+            License::Multiple(_) => todo!("TODO: Refactor multiple handling"),
             _ => return None,
         })
     }
@@ -167,6 +177,7 @@ impl FromStr for License {
             "X11" => License::X11,
             "BSD-2-Clause" => License::BSD_2_Clause,
             "BSD-3-Clause" => License::BSD_3_Clause,
+            "BSL-1.0" => License::BSL_1_0,
             "Apache-2.0" => License::Apache_2_0,
             "LGPL-2.0-only" | "LGPL-2.0" => License::LGPL_2_0,
             "LGPL-2.1-only" | "LGPL-2.1" => License::LGPL_2_1,
@@ -206,6 +217,7 @@ impl fmt::Display for License {
             License::X11 => write!(w, "X11"),
             License::BSD_2_Clause => write!(w, "BSD-2-Clause"),
             License::BSD_3_Clause => write!(w, "BSD-3-Clause"),
+            License::BSL_1_0 => write!(w, "BSL-1.0"),
             License::Apache_2_0 => write!(w, "Apache-2.0"),
             License::LGPL_2_0 => write!(w, "LGPL-2.0-only"),
             License::LGPL_2_1 => write!(w, "LGPL-2.1-only"),
@@ -222,7 +234,7 @@ impl fmt::Display for License {
             License::AGPL_3_0Plus => write!(w, "AGPL-3.0-or-later"),
             License::Custom(ref s) => write!(w, "{}", s),
             License::File(ref f) => {
-                write!(w, "License specified in file ({})", f.to_string_lossy())
+                write!(w, "License specified in file ({})", f.to_string())
             }
             License::Multiple(ref ls) => {
                 write!(w, "{}", ls[0])?;
