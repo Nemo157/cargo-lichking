@@ -56,4 +56,4 @@ additional terms or conditions.
 [rust-version]: #rust-version-policy
 
 [Cargo]: https://github.com/rust-lang/cargo
-[License Slide]: http://www.dwheeler.com/essays/floss-license-slide.html
+[License Slide]: https://dwheeler.com/essays/floss-license-slide.html
